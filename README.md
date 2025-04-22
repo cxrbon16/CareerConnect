@@ -1,3 +1,3 @@
 # CareerConnect
 
-CareerConnect projesinin Backend repository'sidir.
+CareerConnect projesinin backend repository'sidir.
