@@ -1,8 +1,11 @@
-﻿namespace CareerConnect.Models.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CareerConnect.Models.DTOs
 {
     public class LoginRequest
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public required string Email { get; set; }
+        [Required]
+        public required string Password { get; set; }
     }
 }

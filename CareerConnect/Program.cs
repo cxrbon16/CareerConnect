@@ -10,7 +10,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<CVService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<JobService>();
 
 var app = builder.Build();
 
