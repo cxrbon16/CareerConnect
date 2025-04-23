@@ -34,4 +34,10 @@ public class AuthController : ControllerBase
 
         return Ok(new { user.Id, user.Name, user.Email, user.UserType });
     }
+
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAll() { 
+        var allUsers = await _authService.GetAllUsersAsync();
+        return Ok(allUsers);
+    }
 }

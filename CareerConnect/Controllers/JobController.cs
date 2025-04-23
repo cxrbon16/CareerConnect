@@ -22,7 +22,7 @@ public class JobController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("list")]
+    [HttpGet("all")]
     public async Task<IActionResult> ListJobs()
     {
         var jobs = await _jobService.ListJobsAsync();

@@ -42,4 +42,10 @@ public class ApplicationController : ControllerBase
         var applications = await _applicationService.GetUserApplicationsWithJobsAsync(seekerId);
         return Ok(applications);
     }
+
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllApplications() {
+        var applications = await _applicationService.GetAllApplicationsAsync();
+        return Ok(applications);
+    }
 }

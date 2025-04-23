@@ -73,4 +73,10 @@ public class ApplicationService
 
         return result;
     }
+
+    public async Task<List<Application>> GetAllApplicationsAsync()
+    {
+        var applications = await _context.Applications.ToListAsync();
+        return applications;
+    }
 }

@@ -42,4 +42,10 @@ public class AuthService
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, req.Password);
         return result == PasswordVerificationResult.Success ? user : null;
     }
+
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        var allUsers = await _context.Users.ToListAsync();
+        return allUsers;
+    }
 }

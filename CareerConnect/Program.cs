@@ -15,7 +15,7 @@ builder.Services.AddScoped<CVService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<ApplicationService>();
-
+builder.Services.AddScoped<OfferService>();
 
 var app = builder.Build();
 
