@@ -14,6 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<CVService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JobService>();
+builder.Services.AddScoped<ApplicationService>();
+
 
 var app = builder.Build();
 
