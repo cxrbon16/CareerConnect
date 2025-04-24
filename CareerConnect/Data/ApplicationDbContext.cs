@@ -12,6 +12,7 @@ namespace CareerConnect.Data
         public DbSet<Job> Jobs => Set<Job>();
         public DbSet<Application> Applications => Set<Application>();
         public DbSet<Offer> Offers => Set<Offer>();
+        public DbSet<Message> Messages => Set<Message>();
 
     }
 }

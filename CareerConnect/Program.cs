@@ -16,6 +16,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<OfferService>();
+builder.Services.AddScoped<MessageService>();
 
 var app = builder.Build();
 
