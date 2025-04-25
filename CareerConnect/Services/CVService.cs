@@ -1,5 +1,6 @@
 ﻿using CareerConnect.Data;
 using CareerConnect.Models;
+using CareerConnect.Models.DTOs;
 
 namespace CareerConnect.Services;
 
@@ -14,20 +15,38 @@ public class CVService
         _pdfExtractor = new PdfExtractor();
     }
 
+    public async Task<ParsedCV> ParseCvWithApiAsync(string text)
+    {
+        using var client = new HttpClient();
+
+        var requestBody = new { text = text };
+
+        var response = await client.PostAsJsonAsync("http://localhost:8000/parse-cv", requestBody);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Parsing API error: {error}");
+        }
+
+        var parsedCv = await response.Content.ReadFromJsonAsync<ParsedCV>();
+        return parsedCv!;
+    }
+
     public async Task<CV> UploadAndParseAsync(int userId, byte[] fileBytes)
     {
         // Dummy parse
         // Gerçek parsing fonksiyonu burada olacak. Burası değişecek.
 
-        var cvText = _pdfExtractor.ExtractTextFromPdf(fileBytes);
-        
+        var cvText = await _pdfExtractor.PdfToTextAsync(fileBytes);
+        var parseCv = await ParseCvWithApiAsync(cvText);
 
         var cv = new CV
         {
             UserId = userId,
-            Skills = new List<string> { "C#", "ASP.NET", "SQL" },
-            Education = new List<string> { "BS Computer Engineering" },
-            Experience = new List<string> { "3 years at ABC Software" }
+            Skills = parseCv.Skills,
+            Education = parseCv.Education,
+            Experience = parseCv.Experience,
         };
 
         _context.CVs.Add(cv);
