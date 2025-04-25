@@ -1,30 +1,37 @@
-﻿from gliner import GLiNER
-import torch
+﻿import requests
+import json
+import re
 
+async def parse_cv(text: str):
+    payload = {
+        "model": "phi",
+        "prompt": f"""You are an AI assistant. Extract the Skills, Education and Experience from the following CV text. 
+Return the output as a JSON object with fields 'skills', 'education', and 'experience'.
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-model = GLiNER.from_pretrained("urchade/gliner_multi-v2.1", device=device)
-
-def parse_cv(text: str):
-    
-    print(text)
-
-    skill_entities = ["Skill", "Tools", "Programming Languages", "Ability", "Capability", "Yetenek", "Programlama Dili", "Programming"]
-    education_entities = ["Education", "University", "High School", "School", "Institute", "Degree", "Eğitim", "Üniversite", "Lise", "Enstitü"]
-    experience_entities = ["Experience", "Company", "Years"]
-
-    labels = skill_entities + education_entities + experience_entities
-
-    predictions = model.predict_entities(text, labels)
-
-    
-    skills = [p["text"] for p in predictions if p["label"] in skill_entities]
-    education = [p["text"] for p in predictions if p["label"] in education_entities]
-    experience = [p["text"] for p in predictions if p["label"] in experience_entities]
-
-    return {
-        "skills": skills,
-        "education": education,
-        "experience": experience
+CV Text:
+{text}
+"""
     }
+    
+    response = requests.post("http://localhost:11434/api/generate", json=payload)
+    result = response.json()
+
+    generated_text = result['response']
+
+    print(generated_text, flush=True)
+
+    try:
+        extracted = extract_json_from_text(generated_text)
+    except json.JSONDecodeError:
+        raise Exception(f"Model output is not valid JSON: {generated_text}")
+
+    return extracted
+
+def extract_json_from_text(text: str):
+    # İlk { ve son } arasını al
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match:
+        json_str = match.group(0)
+        return json.loads(json_str)
+    else:
+        raise json.JSONDecodeError("No JSON found", text, 0)

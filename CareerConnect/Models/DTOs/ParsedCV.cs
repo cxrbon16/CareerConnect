@@ -9,9 +9,9 @@ namespace CareerConnect.Models.DTOs
 		public List<string> Skills { get; set; }
 
 		[JsonPropertyName("education")]
-		public List<string> Education { get; set; }
+		public List<string>? Education { get; set; }
 
 		[JsonPropertyName("experience")]
-		public List<string> Experience { get; set; }
+		public List<string>? Experience { get; set; }
 	}
 }
