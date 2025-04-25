@@ -6,16 +6,22 @@ namespace CareerConnect.Services;
 public class CVService
 {
     private readonly ApplicationDbContext _context;
+    private readonly PdfExtractor _pdfExtractor;
 
     public CVService(ApplicationDbContext context)
     {
         _context = context;
+        _pdfExtractor = new PdfExtractor();
     }
 
     public async Task<CV> UploadAndParseAsync(int userId, byte[] fileBytes)
     {
         // Dummy parse
         // Gerçek parsing fonksiyonu burada olacak. Burası değişecek.
+
+        var cvText = _pdfExtractor.ExtractTextFromPdf(fileBytes);
+        
+
         var cv = new CV
         {
             UserId = userId,
