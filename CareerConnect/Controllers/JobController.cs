@@ -1,5 +1,6 @@
 ﻿using CareerConnect.Models;
 using CareerConnect.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CareerConnect.Controllers;
@@ -14,7 +15,7 @@ public class JobController : ControllerBase
     {
         _jobService = jobService;
     }
-
+    [Authorize(Policy = "EmployersOnly")] // İş ilanlarını sadece employer eklemeli 
     [HttpPost("post")]
     public async Task<IActionResult> PostJob([FromBody] Job job)
     {
@@ -22,6 +23,7 @@ public class JobController : ControllerBase
         return Ok(result);
     }
 
+    [AllowAnonymous] // İş ilanları herkese açık ise (olmayadabilir)
     [HttpGet("all")]
     public async Task<IActionResult> ListJobs()
     {
