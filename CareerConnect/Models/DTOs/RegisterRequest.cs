@@ -4,12 +4,16 @@ namespace CareerConnect.Models.DTOs
 {
     public class RegisterRequest
     {
-        public required string Name { get; set; }
         [Required]
-        public required string Email { get; set; }
+        public string Name { get; set; }
+
+        [Required, EmailAddress]
+        public string Email { get; set; }
+
         [Required]
-        public required string Password { get; set; }
+        public string Password { get; set; }
+
         [Required]
-        public required UserType UserType { get; set; }
+        public UserType UserType { get; set; }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using CareerConnect.Models.DTOs;
+using CareerConnect.Models;
 using CareerConnect.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace CareerConnect.Controllers
 {
@@ -20,59 +21,83 @@ namespace CareerConnect.Controllers
             _jwtService = jwtService;
         }
 
-        // Kayıt ve login endpoint'leri anonymous erişime açık
+        /// <summary>
+        /// Yeni kullanıcı kaydı. Front-end'den name, email, password, userType ("JOB_SEEKER" | "EMLOYER") gelir.
+        /// Dönen JSON: { token, user: { id, name, email, type: "job-seeker" | "employer" } }
+        /// </summary>
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var user = await _authService.RegisterAsync(request);
             if (user == null)
-                return BadRequest("Email already in use.");
+                return BadRequest(new { message = "Email already in use." });
 
-            // Kayıt sonrası otomatik token üret
             var token = _jwtService.GenerateToken(user);
+
             return Ok(new
             {
-                Token = token,
-                User = new
+                token,
+                user = new
                 {
-                    user.Id,
-                    user.Name,
-                    user.Email,
-                    user.UserType
+                    id = user.Id,
+                    name = user.Name,
+                    email = user.Email,
+                    type = user.UserType == UserType.JOB_SEEKER ? "job-seeker" : "employer"
                 }
             });
         }
 
+        /// <summary>
+        /// Kullanıcı girişi. Front-end'den email, password gelir.
+        /// Dönen JSON: { token, user: { id, name, email, type } }
+        /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var user = await _authService.AuthenticateAsync(request);
             if (user == null)
-                return Unauthorized("Invalid credentials.");
+                return Unauthorized(new { message = "Invalid credentials." });
 
             var token = _jwtService.GenerateToken(user);
+
             return Ok(new
             {
-                Token = token,
-                User = new
+                token,
+                user = new
                 {
-                    user.Id,
-                    user.Name,
-                    user.Email,
-                    user.UserType
+                    id = user.Id,
+                    name = user.Name,
+                    email = user.Email,
+                    type = user.UserType == UserType.JOB_SEEKER ? "job-seeker" : "employer"
                 }
             });
         }
 
-        // Diğer endpoint'ler artık yetkili kullanıcı gerektirir
+        /// <summary>
+        /// Tüm kullanıcıları getirir. Yetkili erişim gerektirir.
+        /// Dönen JSON: [{ id, name, email, type }, ...]
+        /// </summary>
         [Authorize]
-        [HttpGet("all")]
+        [HttpGet("all")] // şuanlık böyle normalde /admin olmalı
         public async Task<IActionResult> GetAll()
         {
             var allUsers = await _authService.GetAllUsersAsync();
-            return Ok(allUsers);
+            var result = allUsers.Select(u => new
+            {
+                id = u.Id,
+                name = u.Name,
+                email = u.Email,
+                type = u.UserType == UserType.JOB_SEEKER ? "job-seeker" : "employer"
+            });
+            return Ok(result);
         }
     }
 }

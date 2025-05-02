@@ -13,6 +13,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowNextJs",
+        policy => policy
+            .WithOrigins("http://localhost:3000")    // Next.js’in çalýþtýðý origin
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+    );
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -88,6 +99,8 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowNextJs");
 
 if (app.Environment.IsDevelopment())
 {
