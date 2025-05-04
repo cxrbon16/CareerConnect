@@ -7,7 +7,7 @@ namespace CareerConnect.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = "JobSeekersOnly")] //Sadece Job Seeker'lar ile sınırlandırıldı
+//[Authorize(Policy = "JobSeekersOnly")] //Sadece Job Seeker'lar ile sınırlandırıldı
 public class CVController : ControllerBase
 {
     private readonly CVService _cvService;
