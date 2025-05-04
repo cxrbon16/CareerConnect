@@ -5,6 +5,7 @@ using CareerConnect.Models;
 using CareerConnect.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CareerConnect.Controllers
 {
@@ -99,5 +100,42 @@ namespace CareerConnect.Controllers
             });
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("profile")]
+        public IActionResult GetProfile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var name = User.FindFirstValue("name");
+            var userType = User.FindFirstValue("UserType");
+
+            return Ok(new
+            {
+                id = int.Parse(userId),
+                email,
+                name,
+                type = userType == "EMPLOYER" ? "employer" : "job-seeker"
+            });
+        }
+
+        [Authorize]
+        [HttpGet("profile/{id}")]
+        public async Task<IActionResult> GetProfileById(int id)
+        {
+            var user = await _authService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            return Ok(new
+            {
+                id = user.Id,
+                name = user.Name,
+                email = user.Email,
+                //experience = user.Experience, // varsa
+                type = user.UserType == UserType.JOB_SEEKER ? "job-seeker" : "employer"
+            });
+        }
+
     }
 }

@@ -86,13 +86,13 @@ public class CVController : ControllerBase
     }
 
     [HttpGet("match-jobs/{cvId}")]
-    public IActionResult MatchJobs(int cvId)
+    public async Task<IActionResult> MatchJobs(int cvId)
     {
-        var cv = _cvService.GetCVById(cvId); // Bunu servise ekleyeceğiz
+        var cv = _cvService.GetCVById(cvId); 
         if (cv == null)
             return NotFound();
-
-        var allJobs = _jobService.ListJobsAsync().Result; // Tüm iş ilanlarını al
+        //var allJobs = _jobService.ListJobsAsync().Result;
+        var allJobs = (await _jobService.ListJobsAsync()).ToList(); // Tüm iş ilanlarını al
 
         var matches = _jobMatchService.Match(cv, allJobs);
         return Ok(matches);

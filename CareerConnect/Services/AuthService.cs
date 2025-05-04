@@ -48,4 +48,10 @@ public class AuthService
         var allUsers = await _context.Users.ToListAsync();
         return allUsers;
     }
+    public async Task<User?> GetUserByIdAsync(int id)
+    {
+        return await _context.Users.FindAsync(id);
+    }
+
+
 }

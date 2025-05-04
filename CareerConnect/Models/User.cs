@@ -21,6 +21,8 @@ namespace CareerConnect.Models
 
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
+        //public string? Experience { get; set; }
+
 
     }
 }

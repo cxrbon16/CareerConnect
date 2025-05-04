@@ -17,4 +17,6 @@ public class Job
     public string Description { get; set; } = string.Empty;
     public string Requirements { get; set; } = string.Empty;
     public List<string> Skills { get; set; } = new();
+    public ICollection<Application> Applications { get; set; } = new List<Application>();
+
 }
